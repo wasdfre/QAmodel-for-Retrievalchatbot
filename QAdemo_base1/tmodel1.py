@@ -10,6 +10,7 @@ import matplotlib as mpl
 import numpy as np
 from nltk.probability import FreqDist
 import time
+import json 
 
 from jiebaSegment import *
 from sentenceSimilarity import SentenceSimilarity
@@ -21,12 +22,16 @@ def read_corpus():
     # 问题的关键词列表
     qList_kw = []
     aList = []
-    data = pd.read_csv('./data/qa_.csv', header=None)
-    data_ls = np.array(data).tolist()
-    for t in data_ls:
-        qList.append(t[0])
-        qList_kw.append(seg.cut(t[0]))
-        aList.append(t[1])
+    path = r"./data/train_pair.json"
+    file = open(path, 'r',encoding='utf-8')
+    info = json.loads(file.read())
+    # data = pd.read_csv('./data/qa_.csv', header=None)
+    # data_ls = np.array(data).tolist()
+    # for t in data_ls:
+    for t in info:
+        qList.append(info[t][0])
+        qList_kw.append(seg.cut(info[t][0]))
+        aList.append(info[t][1])
     return qList_kw, qList, aList
 
 
