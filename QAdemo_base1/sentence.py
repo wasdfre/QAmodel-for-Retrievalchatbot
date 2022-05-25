@@ -18,6 +18,7 @@ class Sentence(object):
 
     # 对句子分词
     def cut(self, seg):
+        #搜索引擎模式
         return seg.cut_for_search(self.origin_sentence)
 
     # 获取切词后的词列表

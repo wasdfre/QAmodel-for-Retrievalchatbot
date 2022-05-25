@@ -35,15 +35,21 @@ class SentenceSimilarity():
 
     # 构建其他复杂模型前需要的简单模型
     def simple_model(self, min_frequency = 1):
+        #直接分词模式
         self.texts = self.get_cuted_sentences()
 
         # 删除低频词
-        frequency = defaultdict(int)
+        frequency = defaultdict(int)#当key不存在返回默认值
         for text in self.texts:
             for token in text:
                 frequency[token] += 1
+            #删除频度不够的词语
         self.texts = [[token for token in text if frequency[token] > min_frequency] for text in self.texts]
+        #建立词袋/词库 词袋模型：该模型忽略掉文本的语法和语序等要素，将文本仅仅看作是若干个词汇的集合
+        #文本特征与词的顺序没有关系，
+        
         self.dictionary = corpora.Dictionary(self.texts)
+        # 将每一句话高维稀疏词频向量
         self.corpus_simple = [self.dictionary.doc2bow(text) for text in self.texts]
 
     # tfidf模型
@@ -52,11 +58,13 @@ class SentenceSimilarity():
 
         # 转换模型
         self.model = models.TfidfModel(self.corpus_simple)
+        #转换后的语料
         self.corpus = self.model[self.corpus_simple]
-
+        # 我们也可以通过save()和load()方法持久化这个相似度矩阵：
         # 创建相似度矩阵
         self.index = similarities.MatrixSimilarity(self.corpus)
 
+    #实现tfidf算法
     # lsi模型
     def LsiModel(self):
         self.simple_model()
